@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HTML, CSS & JavaScript: the web’s three layers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EEF1F6;--surface:#FFFFFF;--ink:#17202E;--muted:#556176;--line:#D5DBE5;
+  --html:#E4572E;--css:#2F7BF5;--js:#F0B400;--code:#F6F8FB;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121826;--surface:#1B2437;--ink:#EAF0FA;--muted:#9AA7BD;--line:#2C3850;--code:#141B2B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121826;--surface:#1B2437;--ink:#EAF0FA;--muted:#9AA7BD;--line:#2C3850;--code:#141B2B;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{height:auto;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif;line-height:1.1;margin:0}
+code,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:68rem;margin:0 auto;padding:0 1.25rem}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 0}
+.logo{font:800 1.15rem "Bricolage Grotesque",sans-serif;display:flex;gap:.15rem}
+.logo i{font-style:normal;padding:.05rem .4rem;border-radius:.4rem;color:#fff}
+.logo i:nth-child(1){background:var(--html)}.logo i:nth-child(2){background:var(--css)}.logo i:nth-child(3){background:var(--js);color:#17202E}
+.theme{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:2rem;padding:.4rem .9rem;font:500 .9rem Figtree,sans-serif;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--css);outline-offset:2px}
+.hero{padding:2.5rem 0 1.5rem;max-width:44rem}
+.hero h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800;letter-spacing:-.02em}
+.hero p{color:var(--muted);font-size:1.2rem;margin:1rem 0 0;max-width:36rem}
+section{padding:2.5rem 0}
+section>.wrap>h2,.sec-head h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:700}
+.sec-head p{color:var(--muted);margin:.5rem 0 1.5rem;max-width:38rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:1.25rem;padding:1.25rem}
+/* layer demo */
+.steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.step{border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:.6rem 1.1rem;border-radius:.8rem;font:600 1rem Figtree,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+.step[aria-pressed="true"]{border-color:var(--c);background:var(--c);color:var(--tc,#fff)}
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:760px){.demo{grid-template-columns:1fr}}
+.preview{background:#fff;color:#111;border-radius:1rem;padding:1.25rem;display:flex;align-items:center;justify-content:center;min-height:17rem;border:1px solid var(--line)}
+.code{background:var(--code);border-radius:1rem;padding:1rem;font-size:.82rem;line-height:1.55;overflow-x:auto;border:1px solid var(--line)}
+.code pre{margin:0 0 .75rem;white-space:pre;opacity:.25;transition:opacity .3s}
+.code pre.on{opacity:1}.code pre:last-child{margin:0}
+.code b{display:block;font:600 .75rem "IBM Plex Mono",monospace;margin-bottom:.2rem}
+.code .h b{color:var(--html)}.code .c b{color:var(--css)}.code .j b{color:#B98900}
+@media(prefers-color-scheme:dark){.code .j b{color:var(--js)}}
+.note{margin:1rem 0 0;color:var(--muted)}
+/* the demo card itself */
+#stage{width:100%;max-width:18rem}
+#stage[data-s="1"] *{all:revert}
+#stage[data-s="1"]{color:#111;font-family:"Times New Roman",serif}
+#stage:not([data-s="1"]) .card{background:linear-gradient(160deg,#fff4e0,#ffe0cc);border-radius:1.2rem;padding:1.4rem;box-shadow:0 12px 30px rgba(228,87,46,.22);text-align:center;font-family:Figtree,sans-serif}
+#stage:not([data-s="1"]) h4{font:800 1.5rem "Bricolage Grotesque",sans-serif;margin:.2rem 0}
+#stage:not([data-s="1"]) p{margin:.2rem 0 1rem;color:#5b4a3f}
+#stage:not([data-s="1"]) button{background:#E4572E;color:#fff;border:0;padding:.65rem 1.3rem;border-radius:2rem;font:600 1rem Figtree,sans-serif;cursor:pointer;transition:transform .15s}
+#stage[data-s="3"] button:active{transform:scale(.92)}
+#stage[data-s="2"] button{cursor:not-allowed;opacity:.8}
+.card .count{display:block;margin-top:.7rem;font-weight:600}
+#stage[data-s="1"] .count,#stage[data-s="2"] .count{display:none}
+/* tabs */
+.tabs{display:flex;gap:.4rem;margin-bottom:1rem}
+.tab{flex:1;border:0;border-bottom:4px solid var(--line);background:transparent;color:var(--muted);padding:.7rem .5rem;font:700 1.1rem "Bricolage Grotesque",sans-serif;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--c)}
+.tp{display:none;grid-template-columns:1.1fr 1fr;gap:1.5rem}
+.tp.on{display:grid}
+@media(max-width:760px){.tp.on{grid-template-columns:1fr}}
+.tp h3{font-size:1.6rem;margin-bottom:.5rem}
+.tp ul{padding-left:1.1rem;color:var(--muted);margin:.8rem 0 0}
+.tp li{margin:.3rem 0}
+.tp pre{margin:0;background:var(--code);border:1px solid var(--line);border-radius:1rem;padding:1rem;font-size:.85rem;overflow-x:auto;align-self:start}
+/* playground */
+.play{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:760px){.play{grid-template-columns:1fr}}
+.ctl label{display:flex;justify-content:space-between;font-weight:600;margin-top:.9rem}
+.ctl input[type=range]{width:100%;accent-color:var(--css)}
+.stagebox{display:grid;place-items:center;min-height:14rem;border-radius:1rem;background:var(--code);border:1px dashed var(--line)}
+#box{width:8rem;height:8rem;display:grid;place-items:center;color:#fff;font:700 1rem "Bricolage Grotesque",sans-serif;transition:all .15s}
+#out{margin:1rem 0 0;font-size:.82rem;background:var(--code);border:1px solid var(--line);border-radius:.8rem;padding:.8rem;overflow-x:auto;white-space:pre}
+/* quiz */
+.q{font:700 1.25rem "Bricolage Grotesque",sans-serif;margin:0 0 1rem}
+.opts{display:grid;gap:.6rem}
+.opt{text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:.8rem;padding:.75rem 1rem;font:500 1rem Figtree,sans-serif;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--css)}
+.opt.ok{border-color:#1E9E5A;background:rgba(30,158,90,.15)}.opt.no{border-color:#D83B3B;background:rgba(216,59,59,.15)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;color:var(--muted)}
+.next{border:0;background:var(--ink);color:var(--bg);border-radius:2rem;padding:.55rem 1.2rem;font:600 1rem Figtree,sans-serif;cursor:pointer}
+.next[hidden]{display:none}
+footer{padding:2rem 0 3rem;color:var(--muted);text-align:center}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo" aria-label="HTML CSS JS"><i>HTML</i><i>CSS</i><i>JS</i></div>
+    <button class="theme" id="theme" type="button">Switch theme</button>
+  </header>
+
+  <div class="hero">
+    <h1>Three languages, one web page.</h1>
+    <p>HTML gives a page its structure, CSS gives it a look, and JavaScript makes it respond. Add each layer below and watch the same page come alive.</p>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>Build a page, one layer at a time</h2><p>Pick a layer. The preview and the code update together.</p></div>
+    <div class="panel">
+      <div class="steps" role="group" aria-label="Layers">
+        <button class="step" style="--c:var(--html)" data-s="1" aria-pressed="true">1. HTML</button>
+        <button class="step" style="--c:var(--css)" data-s="2" aria-pressed="false">2. Add CSS</button>
+        <button class="step" style="--c:var(--js);--tc:#17202E" data-s="3" aria-pressed="false">3. Add JavaScript</button>
+      </div>
+      <div class="demo">
+        <div class="preview">
+          <div id="stage" data-s="1">
+            <div class="card">
+              <h4>Sunrise Bakery</h4>
+              <p>Fresh bread, baked at 5 a.m.</p>
+              <button id="like" type="button">Like this bakery</button>
+              <span class="count" id="count" aria-live="polite">0 likes</span>
+            </div>
+          </div>
+        </div>
+        <div class="code mono">
+<pre class="h on"><b>HTML</b>&lt;div class="card"&gt;
+  &lt;h4&gt;Sunrise Bakery&lt;/h4&gt;
+  &lt;p&gt;Fresh bread…&lt;/p&gt;
+  &lt;button id="like"&gt;Like&lt;/button&gt;
+&lt;/div&gt;</pre>
+<pre class="c"><b>CSS</b>.card {
+  background: peachpuff;
+  border-radius: 1.2rem;
+  text-align: center;
+}
+button { border-radius: 2rem; }</pre>
+<pre class="j"><b>JavaScript</b>let likes = 0;
+like.onclick = () =&gt; {
+  likes++;
+  count.textContent = likes + " likes";
+};</pre>
+        </div>
+      </div>
+      <p class="note" id="note">Step 1: plain HTML. The browser shows its default styling, and the button does nothing yet.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>What each one does</h2></div>
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" style="--c:var(--html)" data-t="0" aria-selected="true">HTML</button>
+        <button class="tab" role="tab" style="--c:var(--css)" data-t="1" aria-selected="false">CSS</button>
+        <button class="tab" role="tab" style="--c:var(--js)" data-t="2" aria-selected="false">JavaScript</button>
+      </div>
+      <div class="tp on">
+        <div><h3>Structure and meaning</h3><p>HTML is a set of tags that label every piece of content: headings, paragraphs, links, images and forms.</p>
+        <ul><li>Tags like <code>&lt;h1&gt;</code> and <code>&lt;nav&gt;</code> tell browsers and screen readers what things are.</li><li>Links connect pages to each other.</li><li>Every website starts here.</li></ul></div>
+<pre>&lt;article&gt;
+  &lt;h1&gt;Hello, web&lt;/h1&gt;
+  &lt;a href="/about"&gt;About me&lt;/a&gt;
+  &lt;img src="cat.jpg" alt="A cat"&gt;
+&lt;/article&gt;</pre>
+      </div>
+      <div class="tp">
+        <div><h3>Style and layout</h3><p>CSS selects elements and sets how they look: colors, fonts, spacing and where things sit on screen.</p>
+        <ul><li>Flexbox and Grid arrange content in rows and columns.</li><li>Media queries adapt a layout to phones and desktops.</li><li>Transitions animate changes smoothly.</li></ul></div>
+<pre>.button {
+  background: royalblue;
+  padding: 0.6rem 1.2rem;
+  border-radius: 99px;
+  transition: transform .2s;
+}
+.button:hover { transform: scale(1.05); }</pre>
+      </div>
+      <div class="tp">
+        <div><h3>Behavior and logic</h3><p>JavaScript runs in the browser and reacts to what people do: clicks, typing, scrolling and more.</p>
+        <ul><li>It reads and changes the page while it’s open.</li><li>It fetches fresh data without reloading.</li><li>It powers games, forms, dashboards and apps.</li></ul></div>
+<pre>const btn = document.querySelector("button");
+btn.addEventListener("click", () =&gt; {
+  document.body.classList.toggle("dark");
+});</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>Play with CSS</h2><p>Move the sliders and see the CSS that produces the shape.</p></div>
+    <div class="panel play">
+      <div class="ctl">
+        <label for="r">Corner radius <span id="rv">24px</span></label><input id="r" type="range" min="0" max="64" value="24">
+        <label for="h">Color hue <span id="hv">210°</span></label><input id="h" type="range" min="0" max="360" value="210">
+        <label for="s">Size <span id="sv">128px</span></label><input id="s" type="range" min="60" max="200" value="128">
+        <label for="rot">Rotation <span id="rotv">0°</span></label><input id="rot" type="range" min="0" max="180" value="0">
+        <pre id="out" class="mono"></pre>
+      </div>
+      <div class="stagebox"><div id="box">box</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>Quick quiz</h2><p>Three questions to check what you’ve picked up.</p></div>
+    <div class="panel" id="quiz" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer><div class="wrap">Made with plain HTML, CSS and JavaScript in one file.</div></footer>
+
+<script>
+// Layer demo
+const notes={1:"Step 1: plain HTML. The browser shows its default styling, and the button does nothing yet.",
+2:"Step 2: CSS adds color, shape and spacing. The button looks clickable but still has no behavior.",
+3:"Step 3: JavaScript listens for clicks. Try the button."};
+let stage=1,likes=0;
+const st=document.getElementById("stage");
+document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{
+  stage=+b.dataset.s;st.dataset.s=stage;
+  document.querySelectorAll(".step").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  document.querySelector(".code .c").classList.toggle("on",stage>=2);
+  document.querySelector(".code .j").classList.toggle("on",stage>=3);
+  document.getElementById("note").textContent=notes[stage];
+}));
+document.getElementById("like").addEventListener("click",()=>{
+  if(stage<3)return;likes++;
+  document.getElementById("count").textContent=likes+(likes===1?" like":" likes");
+});
+// Tabs
+const tabs=[...document.querySelectorAll(".tab")],tps=[...document.querySelectorAll(".tp")];
+tabs.forEach((t,i)=>t.addEventListener("click",()=>{
+  tabs.forEach((x,j)=>x.setAttribute("aria-selected",i===j));
+  tps.forEach((p,j)=>p.classList.toggle("on",i===j));
+}));
+// Playground
+const box=document.getElementById("box"),out=document.getElementById("out");
+const ids=["r","h","s","rot"].map(i=>document.getElementById(i));
+function upd(){
+  const [r,h,s,rot]=ids.map(i=>i.value);
+  box.style.cssText=`width:${s}px;height:${s}px;border-radius:${r}px;background:hsl(${h} 80% 52%);transform:rotate(${rot}deg)`;
+  document.getElementById("rv").textContent=r+"px";document.getElementById("hv").textContent=h+"°";
+  document.getElementById("sv").textContent=s+"px";document.getElementById("rotv").textContent=rot+"°";
+  out.textContent=`.box {\n  width: ${s}px;\n  height: ${s}px;\n  border-radius: ${r}px;\n  background: hsl(${h} 80% 52%);\n  transform: rotate(${rot}deg);\n}`;
+}
+ids.forEach(i=>i.addEventListener("input",upd));upd();
+// Quiz
+const Q=[
+ {q:"Which language defines the structure of a page?",o:["HTML","CSS","JavaScript"],a:0},
+ {q:"Which one would you use to change a button’s color?",o:["HTML","CSS","JavaScript"],a:1},
+ {q:"Which one runs code when someone clicks a button?",o:["CSS","HTML","JavaScript"],a:2}];
+let qi=0,score=0;const quiz=document.getElementById("quiz");
+function render(){
+  if(qi>=Q.length){
+    quiz.innerHTML=`<p class="q">You scored ${score} out of ${Q.length}.</p><button class="next" id="again">Try again</button>`;
+    document.getElementById("again").onclick=()=>{qi=0;score=0;render()};return;}
+  const c=Q[qi];
+  quiz.innerHTML=`<p class="q">${c.q}</p><div class="opts">${c.o.map((t,i)=>`<button class="opt" data-i="${i}">${t}</button>`).join("")}</div>
+  <div class="qfoot"><span>Question ${qi+1} of ${Q.length}</span><button class="next" id="nx" hidden>${qi===Q.length-1?"See score":"Next question"}</button></div>`;
+  quiz.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;if(i===c.a)score++;
+    quiz.querySelectorAll(".opt").forEach((x,j)=>{x.disabled=true;if(j===c.a)x.classList.add("ok");else if(x===b)x.classList.add("no")});
+    const n=document.getElementById("nx");n.hidden=false;n.focus();n.onclick=()=>{qi++;render()};
+  });
+}
+render();
+// Theme
+const root=document.documentElement;
+document.getElementById("theme").addEventListener("click",()=>{
+  const dark=getComputedStyle(root).colorScheme==="dark";
+  root.dataset.theme=dark?"light":"dark";
+});
+</script>
+</body>
+</html>
